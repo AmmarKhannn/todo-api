@@ -1,0 +1,558 @@
+@baseUrl = http://localhost:3000
+@json = application/json
+@todoId = {{createTodo.response.body.$.id}}
+
+### 1 Create a todo (201) - RUN THIS FIRST
+# @name createTodo
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Write API documentation",
+  "description": "OpenAPI + README examples",
+  "state": "todo",
+  "dueDate": "2027-01-15"
+}
+
+### 2 List todos (200)
+GET {{baseUrl}}/todos
+Accept: {{json}}
+
+### 3 Filter todo (200)
+GET {{baseUrl}}/todos?state=todo
+Accept: {{json}}
+
+### 4 Get the created todo (200)
+GET {{baseUrl}}/todos/{{todoId}}
+Accept: {{json}}
+
+### 5 Update state only (200)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"state": "doing"}
+
+### 6 Filter doing (200)
+GET {{baseUrl}}/todos?state=doing
+Accept: {{json}}
+
+### 7 Update all editable fields (200)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Finish API assignment",
+  "description": "Check all requests",
+  "state": "done",
+  "dueDate": "2027-01-16"
+}
+
+### 8 Filter done (200)
+GET {{baseUrl}}/todos?state=done
+Accept: {{json}}
+
+### 9 Create with defaults (201)
+# @name createDefault
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Study REST APIs"}
+
+### 10 Create doing (201)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Doing task", "state": "doing"}
+
+### 11 Create done (201)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Done task", "state": "done"}
+
+### 12 Trim title and accept an empty description (200)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "  Finish assignment  ", "description": ""}
+
+### POST rejects array (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+[]
+
+### POST rejects null (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+null
+
+### POST rejects string (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+"hello"
+
+### POST rejects number (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+123
+
+### POST rejects boolean (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+true
+
+### POST rejects title missing (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"description": "No title"}
+
+### POST rejects title empty (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": ""}
+
+### POST rejects title spaces (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "   "}
+
+### POST rejects title wrong type (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": 12}
+
+### POST rejects title null (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": null}
+
+### POST rejects description wrong type (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "description": 12}
+
+### POST rejects description null (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "description": null}
+
+### POST rejects invalid state (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": "finished"}
+
+### POST rejects uppercase state (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": "TODO"}
+
+### POST rejects null state (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": null}
+
+### POST rejects number state (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": 1}
+
+### POST rejects wrong date format (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": "tomorrow"}
+
+### POST rejects impossible date (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": "2026-02-30"}
+
+### POST rejects wrong date type (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": 123}
+
+### POST rejects null date (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": null}
+
+### POST rejects unknown field (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "extra": true}
+
+### POST rejects client-supplied id (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "id": "mine"}
+
+### POST rejects client-supplied timestamp (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "createdAt": "today"}
+
+### POST rejects client-supplied updatedAt (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "updatedAt": "today"}
+
+### POST malformed JSON (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+
+{"title":
+
+### POST missing body (400)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+
+
+
+### POST wrong Content-Type (415)
+POST {{baseUrl}}/todos
+Content-Type: text/plain
+
+{}
+
+### POST missing Content-Type (415)
+POST {{baseUrl}}/todos
+
+
+
+
+### POST unsupported charset (415)
+POST {{baseUrl}}/todos
+Content-Type: application/json; charset=iso-8859-1
+
+{}
+
+### POST unsupported encoding (415)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+Content-Encoding: unknown
+
+{}
+
+### POST body over 16 KB (413)
+POST {{baseUrl}}/todos
+Content-Type: {{json}}
+
+< ./test/large-body.json
+
+### PUT rejects array (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+[]
+
+### PUT rejects null (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+null
+
+### PUT rejects string (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+"hello"
+
+### PUT rejects number (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+123
+
+### PUT rejects boolean (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+true
+
+### PUT rejects title empty (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": ""}
+
+### PUT rejects title spaces (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "   "}
+
+### PUT rejects title wrong type (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": 12}
+
+### PUT rejects title null (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": null}
+
+### PUT rejects description wrong type (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "description": 12}
+
+### PUT rejects description null (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "description": null}
+
+### PUT rejects invalid state (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": "finished"}
+
+### PUT rejects uppercase state (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": "TODO"}
+
+### PUT rejects null state (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": null}
+
+### PUT rejects number state (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "state": 1}
+
+### PUT rejects wrong date format (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": "tomorrow"}
+
+### PUT rejects impossible date (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": "2026-02-30"}
+
+### PUT rejects wrong date type (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": 123}
+
+### PUT rejects null date (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "dueDate": null}
+
+### PUT rejects unknown field (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "extra": true}
+
+### PUT rejects client-supplied id (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "id": "mine"}
+
+### PUT rejects client-supplied timestamp (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "createdAt": "today"}
+
+### PUT rejects client-supplied updatedAt (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{"title": "Test", "updatedAt": "today"}
+
+### Empty update (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+
+{}
+
+### PUT malformed JSON (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+
+{"title":
+
+### PUT missing body (400)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+
+
+
+### PUT wrong Content-Type (415)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: text/plain
+
+{}
+
+### PUT missing Content-Type (415)
+PUT {{baseUrl}}/todos/{{todoId}}
+
+
+
+
+### PUT unsupported charset (415)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json; charset=iso-8859-1
+
+{}
+
+### PUT unsupported encoding (415)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+Content-Encoding: unknown
+
+{}
+
+### PUT body over 16 KB (413)
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: {{json}}
+
+< ./test/large-body.json
+
+### Invalid filter state=wrong (400)
+GET {{baseUrl}}/todos?state=wrong
+Accept: {{json}}
+
+### Invalid filter state= (400)
+GET {{baseUrl}}/todos?state=
+Accept: {{json}}
+
+### Invalid filter state=todo&state=done (400)
+GET {{baseUrl}}/todos?state=todo&state=done
+Accept: {{json}}
+
+### Invalid filter other=todo (400)
+GET {{baseUrl}}/todos?other=todo
+Accept: {{json}}
+
+### Invalid filter state[]=todo (400)
+GET {{baseUrl}}/todos?state[]=todo
+Accept: {{json}}
+
+### GET missing todo (404)
+GET {{baseUrl}}/todos/1000
+Accept: {{json}}
+
+### PUT missing todo (404)
+PUT {{baseUrl}}/todos/1000
+Accept: {{json}}
+Content-Type: {{json}}
+
+{"state":"doing"}
+
+### DELETE missing todo (404)
+DELETE {{baseUrl}}/todos/1000
+Accept: {{json}}
+
+### Unknown endpoint (404)
+GET {{baseUrl}}/missing
+
+### Invalid URL encoding (400)
+GET {{baseUrl}}/todos/%ZZ
+
+### Delete the created todo (204) - RUN AFTER ERROR TESTS
+DELETE {{baseUrl}}/todos/{{todoId}}
+
+### Confirm it was deleted (404)
+GET {{baseUrl}}/todos/{{todoId}}
+
+### Repeated delete (404)
+DELETE {{baseUrl}}/todos/{{todoId}}
+
+### Delete the default todo (204)
+DELETE {{baseUrl}}/todos/{{createDefault.response.body.$.id}}
